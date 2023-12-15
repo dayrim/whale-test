@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     TelegrafModule.forRootAsync({
       imports: [ConfigModule.forRoot()],
       useFactory: (configService: ConfigService) => {
+        console.log(configService.get<string>('TELEGRAM_BOT_TOKEN'));
         return {
           token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
           launchOptions: {
