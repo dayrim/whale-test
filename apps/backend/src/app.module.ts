@@ -1,10 +1,28 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppUpdate } from './app.service';
+import { TelegrafModule } from 'nestjs-telegraf';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [],
+  imports: [
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule.forRoot()],
+      useFactory: (configService: ConfigService) => {
+        return {
+          token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
+          launchOptions: {
+            webhook: {
+              domain: configService.get<string>('TELEGRAM_WEBHOOK_DOMAIN'),
+              hookPath: '/secret-path',
+            },
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppUpdate],
 })
 export class AppModule {}
