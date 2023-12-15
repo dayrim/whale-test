@@ -32,5 +32,5 @@
 FROM node:18-alpine
 WORKDIR /app
 COPY ./dist .
-CMD ["node", "dist/main.js"]
+CMD ["node", "main.js"]
 

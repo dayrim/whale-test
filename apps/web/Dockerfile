@@ -31,4 +31,4 @@
 FROM node:18-alpine
 WORKDIR /app
 COPY ./build .
-CMD ["node", "build/index.js"]
+CMD ["node", "index.js"]
