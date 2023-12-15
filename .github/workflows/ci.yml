@@ -5,8 +5,8 @@ on:
     branches: ["main"]
 
 jobs:
-  build-and-push:
-    name: Build and Push Docker Images
+  build-and-push-backend:
+    name: Build and Push Backend Docker Image
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -24,8 +24,6 @@ jobs:
         with:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-          # Replace with your registry's login URL if not Docker Hub
-          # registry: your-registry-url.com
 
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v2
@@ -34,7 +32,26 @@ jobs:
           file: apps/backend/Dockerfile
           push: true
           tags: dayrim/whale-backend:latest
-          # Add other parameters as needed
+
+  build-and-push-web:
+    name: Build and Push Web Docker Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Build and push Web Docker image
         uses: docker/build-push-action@v2
@@ -43,4 +60,39 @@ jobs:
           file: apps/web/Dockerfile
           push: true
           tags: dayrim/whale-web:latest
-          # Add other parameters as needed
+
+  deploy:
+    name: Deploy with Docker Compose
+    runs-on: ubuntu-latest
+    needs: [build-and-push-backend, build-and-push-web]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Prepare docker-compose file
+        run: |
+          sed -i 's/env_var_1_placeholder/${{ secrets.TELEGRAM_BOT_TOKEN }}/' docker-compose.yml
+          sed -i 's/env_var_2_placeholder/${{ secrets.TELEGRAM_WEBHOOK_DOMAIN }}/' docker-compose.yml
+
+      - name: Copy docker-compose file to remote server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_SERVER_IP }}
+          username: ${{ secrets.REMOTE_SERVER_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          passphrase: ${{ secrets.REMOTE_SSH_PASSPHRASE }}
+          source: "./docker-compose.yml"
+          target: "/whale-test"
+
+      - name: Deploy using Docker Compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_SERVER_IP }}
+          username: ${{ secrets.REMOTE_SERVER_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          passphrase: ${{ secrets.REMOTE_SSH_PASSPHRASE }}
+          script: |
+            cd /whale-test
+            docker-compose pull
+            docker-compose up -d
+            docker-compose ps

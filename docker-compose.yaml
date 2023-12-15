@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  backend:
+    image: dayrim/whale-backend:latest
+    ports:
+      - "8888:80"
+    environment:
+      - TELEGRAM_BOT_TOKEN=env_var_1_placeholder
+      - TELEGRAM_WEBHOOK_DOMAIN=env_var_2_placeholder
+    # Add other configurations as needed
+
+  web:
+    image: dayrim/whale-web:latest
+    ports:
+      - "3333:3000"
+
+    # Add other configurations as needed
