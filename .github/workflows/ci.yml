@@ -69,19 +69,24 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Prepare docker-compose file
+      - name: Prepare .env file
         run: |
-          sed -i 's/env_var_1_placeholder/${{ secrets.TELEGRAM_BOT_TOKEN }}/' docker-compose.yml
-          sed -i 's/env_var_2_placeholder/${{ secrets.TELEGRAM_WEBHOOK_DOMAIN }}/' docker-compose.yml
+          echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+          echo "TELEGRAM_WEBHOOK_DOMAIN=${{ secrets.TELEGRAM_WEBHOOK_DOMAIN }}" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+          echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+          echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
 
-      - name: Copy docker-compose file to remote server
+      - name: Copy docker-compose file and .env file to remote server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.REMOTE_SERVER_IP }}
           username: ${{ secrets.REMOTE_SERVER_USER }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           passphrase: ${{ secrets.REMOTE_SSH_PASSPHRASE }}
-          source: "./docker-compose.yml"
+          source: "./docker-compose.yml,./.env"
           target: "~/whale-test"
 
       - name: Deploy using Docker Compose

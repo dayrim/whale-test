@@ -1,17 +1,26 @@
-version: '3.8'
+version: "3.8"
 services:
   backend:
     image: dayrim/whale-backend:latest
     ports:
-      - "8888:80"
+      - "8888:8888"
     environment:
-      - TELEGRAM_BOT_TOKEN=env_var_1_placeholder
-      - TELEGRAM_WEBHOOK_DOMAIN=env_var_2_placeholder
-    # Add other configurations as needed
-
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_WEBHOOK_DOMAIN=${TELEGRAM_WEBHOOK_DOMAIN}
   web:
     image: dayrim/whale-web:latest
     ports:
       - "3333:3000"
-
-    # Add other configurations as needed
+  db:
+    container_name: whale-db-container
+    image: postgres:16
+    command: postgres -N 200
+    ports:
+      - "${POSTGRES_PORT}:5432"
+      - "8085:8080"
+    volumes:
+      - ~/db/data/whale-postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
