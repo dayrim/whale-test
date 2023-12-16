@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whale-db
+  labels:
+    app: whale-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whale-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: whale-db
+    spec:
+      containers:
+        - name: whale-db-container
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: whale-db-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: whale-db-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: whale-db-secret
+                  key: POSTGRES_PASSWORD
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: whale-db-claim
+      volumes:
+        - name: whale-db-claim
+          persistentVolumeClaim:
+            claimName: whale-db-claim
+      restartPolicy: Always

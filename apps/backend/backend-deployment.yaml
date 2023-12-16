@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: dayrim/whale-backend:latest
+          ports:
+            - containerPort: 8888
+          env:
+            - name: POSTGRES_DB
+            - name: POSTGRES_HOST
+            - name: POSTGRES_PASSWORD
+            - name: POSTGRES_PORT
+            - name: POSTGRES_USER
+            - name: TELEGRAM_BOT_TOKEN
+            - name: TELEGRAM_WEBHOOK_DOMAIN
+            - name: WEB_URL
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      restartPolicy: Always

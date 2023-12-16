@@ -74,3 +74,11 @@ The bot can be deployed on any Node.js compatible hosting service. For deploymen
 1. **Local Deployment**: Configure the `.env` file and run the application using `docker-compose.yml`.
 
 2. **Automated Deployment via GitHub Actions**: Pushing to the main branch triggers a CI/CD pipeline that builds and pushes Docker images for the backend and web frontend, followed by deployment using Docker Compose on the remote server.
+
+Deploy db using kube
+
+kubectl create secret generic whale-db-secret --from-env-file=.env
+
+kubectl apply -f db-pvc.yaml
+kubectl apply -f db-deployment.yaml
+kubectl apply -f db-service.yaml
