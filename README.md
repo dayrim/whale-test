@@ -14,8 +14,6 @@ Preview this bot in telegram https://t.me/WhaleTestAppBot
 - `/adminhello <telegram_id> <text>` Command: Admins can send personalized messages to users by invoking this command followed by the user's Telegram ID and the intended message.
 - User Persistence: The bot stores user information in a PostgresSQL database, making it accessible for future interactions and additional functionality.
 
-## Getting Started
-
 ### Project Structure
 
 The project follows a monorepo pattern and includes the following directories:
@@ -31,6 +29,8 @@ The project follows a monorepo pattern and includes the following directories:
 - [TypeORM](https://typeorm.io/) for database management.
 - [Svelte](https://svelte.dev/) for the web frontend.
 - [Turbo](https://turborepo.org/) for monorepo utilities.
+
+## Getting Started
 
 ### Installation
 
