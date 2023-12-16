@@ -56,7 +56,7 @@ app/web: A simple Svelte web application that greets users.
 
 ### Utilities
 
-- Node.js for the runtime environment.
+- NestJS for the backend framwork.
 - Telegraf for interacting with the Telegram Bot API.
 - TypeORM for database management.
 - Svelte for the web frontend.
