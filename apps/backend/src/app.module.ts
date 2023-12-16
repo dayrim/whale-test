@@ -1,10 +1,10 @@
-import { Logger, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppUpdate } from './app.service';
+import { Module } from '@nestjs/common';
+import { BotService } from './services/bot.service';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TelegramUser } from './telegram-user.entity';
+import { TelegramUser } from './entities/telegram-user.entity';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -14,15 +14,11 @@ import { TelegramUser } from './telegram-user.entity';
     }),
     TelegrafModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
-        const webhookDomain = configService.get<string>('TELEGRAM_WEBHOOK_DOMAIN');
-        const logger = new Logger('TelegrafConfig');
-        logger.verbose(`Webhook domain is set to: ${webhookDomain}`);
-
         return {
           token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
           launchOptions: {
             webhook: {
-              domain: webhookDomain,
+              domain: configService.get<string>('TELEGRAM_WEBHOOK_DOMAIN'),
               hookPath: '/secret-path',
             },
           },
@@ -34,18 +30,10 @@ import { TelegramUser } from './telegram-user.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        const logger = new Logger('PostgresConfig');
-
-        const host = configService.get<string>('POSTGRES_HOST');
-        logger.verbose(`Postgres host is set to: ${host}`);
-
-        const port = configService.get<number>('POSTGRES_PORT');
-        logger.verbose(`Postgres port is set to: ${port}`);
-
         return {
           type: 'postgres',
-          host,
-          port,
+          host: configService.get<string>('POSTGRES_HOST'),
+          port: configService.get<number>('POSTGRES_PORT'),
           username: configService.get<string>('POSTGRES_USER'),
           password: configService.get<string>('POSTGRES_PASSWORD'),
           database: configService.get<string>('POSTGRES_DB'),
@@ -57,7 +45,7 @@ import { TelegramUser } from './telegram-user.entity';
     }),
     TypeOrmModule.forFeature([TelegramUser]),
   ],
+  providers: [BotService],
   controllers: [AppController],
-  providers: [AppUpdate],
 })
 export class AppModule {}

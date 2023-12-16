@@ -1,12 +1,12 @@
 import { Update, Ctx, Start, Command } from 'nestjs-telegraf';
 import { Context, Markup } from 'telegraf';
-import { TelegramUser } from './telegram-user.entity';
+import { TelegramUser } from '../entities/telegram-user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 
 @Update()
-export class AppUpdate {
+export class BotService {
   private readonly webUrl: string;
   constructor(
     @InjectRepository(TelegramUser)
@@ -18,15 +18,21 @@ export class AppUpdate {
 
   @Start()
   async start(@Ctx() ctx: Context) {
-    const user = ctx.from;
-    const telegramUser = this.userRepository.create(user);
-    await this.userRepository.save(telegramUser);
-    const message = `Welcome ${telegramUser.first_name}`;
-    const websiteUrlWithUsername = `${this.webUrl}?username=${telegramUser.first_name}`;
-    const urlButton = Markup.button.url('Visit Website', websiteUrlWithUsername);
-    const inlineKeyboard = Markup.inlineKeyboard([urlButton]);
+    try {
+      const user = ctx.from;
+      const telegramUser = this.userRepository.create(user);
+      await this.userRepository.save(telegramUser);
 
-    await ctx.reply(message, inlineKeyboard);
+      const message = `Welcome ${telegramUser.first_name}`;
+      const websiteUrlWithUsername = `${this.webUrl}?username=${telegramUser.first_name}`;
+      const urlButton = Markup.button.url('Visit Website', websiteUrlWithUsername);
+
+      const inlineKeyboard = Markup.inlineKeyboard([urlButton]);
+
+      await ctx.reply(message, inlineKeyboard);
+    } catch (error) {
+      await ctx.reply('Sorry, an error occurred: ', error.message);
+    }
   }
   @Command('adminhello')
   async adminHello(@Ctx() ctx: Context) {

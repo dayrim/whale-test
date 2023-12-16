@@ -1,4 +1,4 @@
-# Telegram Whale Test Project
+# Telegram Whale Test Project (Nestjs, Svelte, PostgreSQL)
 
 ![Alt whale-coding](https://media.discordapp.net/attachments/1103192058455396443/1185599138310660177/dayrim_logo_for_a_software_developer_company_whale_sitting_with_ff904e0e-1123-472d-81d4-781759be24da.png?ex=6590323d&is=657dbd3d&hm=c2d73437c96efe8e155c1f0c02511068af92360f7d911aa5fe958b02fc3eb7f9&=&format=webp&quality=lossless&width=1328&height=450)
 
@@ -11,10 +11,26 @@ Preview this bot in telegram https://t.me/WhaleTestAppBot
 ## Features
 
 - `/start` Command: Users can initiate interaction with the bot. The bot will respond with a message and a web app button that, when clicked, displays the user's first name as a greeting on a simple webpage.
-- User Persistence: The bot stores user information in a database, making it accessible for future interactions and additional functionality.
 - `/adminhello <telegram_id> <text>` Command: Admins can send personalized messages to users by invoking this command followed by the user's Telegram ID and the intended message.
+- User Persistence: The bot stores user information in a PostgresSQL database, making it accessible for future interactions and additional functionality.
 
 ## Getting Started
+
+### Project Structure
+
+The project follows a monorepo pattern and includes the following directories:
+
+- app/backend: Contains the Telegram bot source code.
+- app/web: A simple Svelte web application that greets users.
+- .github/workflows: Github deployment pipeline
+
+### Utilities
+
+- [NestJS](https://nestjs.com/) for the backend framework.
+- [Telegraf](https://telegraf.js.org/) for interacting with the Telegram Bot API.
+- [TypeORM](https://typeorm.io/) for database management.
+- [Svelte](https://svelte.dev/) for the web frontend.
+- [Turbo](https://turborepo.org/) for monorepo utilities.
 
 ### Installation
 
@@ -51,20 +67,10 @@ yarn dev
 yarn build
 ```
 
-### Project Structure
+## Deploying
 
-The project follows a monorepo pattern and includes the following directories:
+The bot can be deployed on any Node.js compatible hosting service. For deployment, you have two options:
 
-- app/backend: Contains the Telegram bot source code.
-- app/web: A simple Svelte web application that greets users.
+1. **Local Deployment**: Configure the `.env` file and run the application using `docker-compose.yml`.
 
-### Utilities
-
-- NestJS for the backend framwork.
-- Telegraf for interacting with the Telegram Bot API.
-- TypeORM for database management.
-- Svelte for the web frontend.
-
-### Deploying
-
-The bot can be deployed on any Node.js compatible hosting service. Ensure the environment variables are set up in your hosting service's configuration.
+2. **Automated Deployment via GitHub Actions**: Pushing to the main branch triggers a CI/CD pipeline that builds and pushes Docker images for the backend and web frontend, followed by deployment using Docker Compose on the remote server.
