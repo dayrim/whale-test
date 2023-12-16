@@ -1,4 +1,6 @@
-# Telegram Bot Project
+# Telegram Whale Test Project
+
+![Alt whale-coding](https://media.discordapp.net/attachments/1103192058455396443/1185599138310660177/dayrim_logo_for_a_software_developer_company_whale_sitting_with_ff904e0e-1123-472d-81d4-781759be24da.png?ex=6590323d&is=657dbd3d&hm=c2d73437c96efe8e155c1f0c02511068af92360f7d911aa5fe958b02fc3eb7f9&=&format=webp&quality=lossless&width=1328&height=450)
 
 This project is a Node.js-based Telegram bot designed to interact with users by providing a personalized greeting and administrative capabilities.
 
@@ -23,6 +25,7 @@ git clone your-repo-link
 cd your-repo-directory
 yarn install
 ```
+
 ### Configuration
 
 ```sh
@@ -49,6 +52,7 @@ yarn build
 ```
 
 ### Project Structure
+
 The project follows a monorepo pattern and includes the following directories:
 
 - app/backend: Contains the Telegram bot source code.
@@ -62,4 +66,5 @@ The project follows a monorepo pattern and includes the following directories:
 - Svelte for the web frontend.
 
 ### Deploying
+
 The bot can be deployed on any Node.js compatible hosting service. Ensure the environment variables are set up in your hosting service's configuration.
