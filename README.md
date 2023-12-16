@@ -51,8 +51,8 @@ yarn build
 ### Project Structure
 The project follows a monorepo pattern and includes the following directories:
 
-app/backend: Contains the Telegram bot source code.
-app/web: A simple Svelte web application that greets users.
+- app/backend: Contains the Telegram bot source code.
+- app/web: A simple Svelte web application that greets users.
 
 ### Utilities
 
