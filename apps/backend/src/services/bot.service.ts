@@ -6,9 +6,6 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
-import { Api } from 'telegram/tl';
-import input from 'input'; // npm i input
-
 @Update()
 export class BotService {
   private readonly webUrl: string;
