@@ -50,7 +50,7 @@ export class BotService {
       const text = args.slice(1).join(' ');
 
       // Retrieve the user from the database using the context's user ID
-      const user = await this.userRepository.findOne({ where: { id: ctx.from.id } });
+      const user = await this.userRepository.findOne({ where: { id: ctx.from.id.toString() } });
 
       // Check if the user is an admin
       if (user && user.is_admin) {
@@ -69,7 +69,7 @@ export class BotService {
 
   @Command('getuserid')
   async getUserId(@Ctx() ctx: Context) {
-    const user = await this.userRepository.findOne({ where: { id: ctx.from.id } });
+    const user = await this.userRepository.findOne({ where: { id: ctx.from.id.toString() } });
     // Check if the user is an admin
     if (!user || !user.is_admin) {
       await ctx.reply('You are not authorized to use this command.');
