@@ -12,7 +12,7 @@ export class BotService {
   constructor(
     @InjectRepository(TelegramUser)
     private readonly userRepository: Repository<TelegramUser>,
-    private readonly configService: ConfigService, // Inject the ConfigService
+    private readonly configService: ConfigService,
   ) {
     this.webUrl = this.configService.get<string>('WEB_URL');
   }
@@ -49,10 +49,8 @@ export class BotService {
       const telegramId = parseInt(args[0], 10);
       const text = args.slice(1).join(' ');
 
-      // Retrieve the user from the database using the context's user ID
       const user = await this.userRepository.findOne({ where: { id: ctx.from.id.toString() } });
 
-      // Check if the user is an admin
       if (user && user.is_admin) {
         try {
           await ctx.telegram.sendMessage(telegramId, text);
@@ -114,7 +112,6 @@ export class BotService {
   @Command('makeadmin')
   async makeUserAdmin(@Ctx() ctx: Context) {
     const adminUser = await this.userRepository.findOne({ where: { id: ctx.from.id.toString() } });
-    // Check if the user invoking the command is an admin
     if (!adminUser || !adminUser.is_admin) {
       await ctx.reply('You are not authorized to use this command.');
       return;
@@ -131,7 +128,6 @@ export class BotService {
 
       let userToMakeAdmin = await this.userRepository.findOne({ where: { id: adminId } });
 
-      // If user not found, create a new user
       if (!userToMakeAdmin) {
         try {
           userToMakeAdmin = this.userRepository.create({
@@ -143,7 +139,7 @@ export class BotService {
             language_code: '',
             is_premium: false,
             added_to_attachment_menu: false,
-            is_admin: true, // Set as admin
+            is_admin: true,
           });
           await this.userRepository.save(userToMakeAdmin);
           await ctx.reply(`New user created and set as admin with ID: ${adminId}`);
@@ -151,7 +147,6 @@ export class BotService {
           await ctx.reply(`Error adding new user: ` + e.message);
         }
       } else {
-        // Update the user's is_admin status
         userToMakeAdmin.is_admin = true;
         await this.userRepository.save(userToMakeAdmin);
         await ctx.reply(`User with ID: ${adminId} is now an admin.`);
