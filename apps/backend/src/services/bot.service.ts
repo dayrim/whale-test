@@ -65,17 +65,10 @@ export class BotService {
 
   @Command('getuserid')
   async getUserId(@Ctx() ctx: Context) {
-    const user = await this.userRepository.findOne({ where: { id: ctx.from.id } });
-
-    // Check if the user is an admin
-    if (!(user && user.is_admin)) {
-      await ctx.reply('You are not authorized to use this command.');
-      return;
-    }
-
     if ('text' in ctx.message) {
       const args = ctx.message.text.split(' ').slice(1);
       const username = args[0]; // Assuming this is the Telegram username
+      console.log('Username to find:', username);
 
       // Ensure that username is provided
       if (!username) {
@@ -85,10 +78,10 @@ export class BotService {
 
       const stringSession = ''; // Your saved session string
       const botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
-      const appId = this.configService.get<number>('TELEGRAM_APP_ID');
-      const appIdHash = this.configService.get<string>('TELEGRAM_APP_ID_HASH');
+      const appId = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
+      const appIdHash = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
       (async () => {
-        const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
+        const client = new TelegramClient(new StringSession(stringSession), 29228878, 'e5baec1b048baeb5df82a1ace1b7b65a', {
           connectionRetries: 5,
         });
         await client.start({
