@@ -5,6 +5,9 @@ export class TelegramUser {
   @PrimaryColumn()
   id: number;
 
+  @Column({ default: false })
+  is_admin: boolean;
+
   @Column()
   is_bot: boolean;
 
