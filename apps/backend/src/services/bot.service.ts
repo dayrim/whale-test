@@ -65,6 +65,12 @@ export class BotService {
 
   @Command('getuserid')
   async getUserId(@Ctx() ctx: Context) {
+    const user = await this.userRepository.findOne({ where: { id: ctx.from.id } });
+    // Check if the user is an admin
+    if (!user || !user.is_admin) {
+      await ctx.reply('You are not authorized to use this command.');
+      return;
+    }
     if ('text' in ctx.message) {
       const args = ctx.message.text.split(' ').slice(1);
       const username = args[0]; // Assuming this is the Telegram username
