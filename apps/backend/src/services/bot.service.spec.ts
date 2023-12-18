@@ -40,7 +40,7 @@ describe('BotService', () => {
   describe('start method', () => {
     it('should save a new user and send a welcome message', async () => {
       const mockCtx = {
-        from: { id: 123, first_name: 'John', is_bot: false },
+        from: { id: '123', first_name: 'John', is_bot: false },
         reply: jest.fn(),
       } as unknown as Context;
 
@@ -57,7 +57,7 @@ describe('BotService', () => {
 
     it('should handle errors', async () => {
       const mockCtx = {
-        from: { id: 123, first_name: 'John', is_bot: false },
+        from: { id: '123', first_name: 'John', is_bot: false },
         reply: jest.fn(),
       } as unknown as Context;
 
