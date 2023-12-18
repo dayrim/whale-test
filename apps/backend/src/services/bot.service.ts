@@ -41,8 +41,11 @@ export class BotService {
       const telegramId = parseInt(args[0], 10);
       const text = args.slice(1).join(' ');
 
-      const adminId = 761931477;
-      if (ctx.from.id === adminId) {
+      // Retrieve the user from the database using the context's user ID
+      const user = await this.userRepository.findOne({ where: { id: ctx.from.id } });
+
+      // Check if the user is an admin
+      if (user && user.is_admin) {
         try {
           await ctx.telegram.sendMessage(telegramId, text);
         } catch (error) {
