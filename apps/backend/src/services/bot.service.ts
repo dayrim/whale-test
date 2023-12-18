@@ -81,22 +81,21 @@ export class BotService {
       const appId = this.configService.get<number>('TELEGRAM_APP_ID');
       const appIdHash = this.configService.get<string>('TELEGRAM_APP_ID_HASH');
       (async () => {
-        const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
-          connectionRetries: 5,
-        });
-        await client.start({
-          botAuthToken: botToken,
-        });
-        console.log('Session:', client.session.save());
-
         try {
+          const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
+            connectionRetries: 5,
+          });
+          await client.start({
+            botAuthToken: botToken,
+          });
+          console.log('Session:', client.session.save());
           const userEntity = await client.getInputEntity(username);
           if ('userId' in userEntity) {
             await ctx.reply('User ID: ' + userEntity.userId);
           }
         } catch (error) {
-          console.error('Error retrieving user entity:', error);
-          await ctx.reply('Error retrieving user information.');
+          console.error('Error retrieving user information:', error);
+          await ctx.reply('Error retrieving user information:' + error.message);
         }
       })();
     } else {
