@@ -78,8 +78,8 @@ export class BotService {
 
       const stringSession = ''; // Your saved session string
       const botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
-      const appId = this.configService.get<number>('TELEGRAM_BOT_TOKEN');
-      const appIdHash = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
+      const appId = this.configService.get<number>('TELEGRAM_APP_ID');
+      const appIdHash = this.configService.get<string>('TELEGRAM_APP_ID_HASH');
       (async () => {
         const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
           connectionRetries: 5,
