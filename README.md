@@ -14,6 +14,7 @@ Preview this bot in telegram https://t.me/WhaleTestAppBot
 - `/adminhello <telegram_id> <text>` Command: Admins can send personalized messages to users by invoking this command followed by the user's Telegram ID and the intended message.
 - `/getuserid <username>` Admins can retrivies any telegram user's id by providing username
 - User Persistence: The bot stores user information in a PostgresSQL database, making it accessible for future interactions and additional functionality.
+- `/makeadmin <userid>` Admins can make other users an admin
 
 ### Project Structure
 
