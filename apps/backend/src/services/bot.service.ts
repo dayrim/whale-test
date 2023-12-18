@@ -68,7 +68,6 @@ export class BotService {
   @Command('getuserid')
   async getUserId(@Ctx() ctx: Context) {
     const user = await this.userRepository.findOne({ where: { id: ctx.from.id.toString() } });
-    // Check if the user is an admin
     if (!user || !user.is_admin) {
       await ctx.reply('You are not authorized to use this command.');
       return;
@@ -76,7 +75,6 @@ export class BotService {
     if ('text' in ctx.message) {
       const args = ctx.message.text.split(' ').slice(1);
       const username = args[0];
-      console.log('Username to find:', username);
 
       if (!username) {
         await ctx.reply('Please provide a username.');
@@ -87,24 +85,21 @@ export class BotService {
       const botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
       const appId = this.configService.get<number>('TELEGRAM_APP_ID');
       const appIdHash = this.configService.get<string>('TELEGRAM_APP_ID_HASH');
-      (async () => {
-        try {
-          const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
-            connectionRetries: 5,
-          });
-          await client.start({
-            botAuthToken: botToken,
-          });
-          client.session.save();
-          const userEntity = await client.getInputEntity(username);
-          if ('userId' in userEntity) {
-            await ctx.reply('User ID: ' + userEntity.userId);
-          }
-        } catch (error) {
-          console.error('Error retrieving user information:', error);
-          await ctx.reply('Error retrieving user information:' + error.message);
+      try {
+        const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
+          connectionRetries: 5,
+        });
+        await client.start({
+          botAuthToken: botToken,
+        });
+        client.session.save();
+        const userEntity = await client.getInputEntity(username);
+        if ('userId' in userEntity) {
+          await ctx.reply('User ID: ' + userEntity.userId);
         }
-      })();
+      } catch (error) {
+        await ctx.reply('Error retrieving user information:' + error.message);
+      }
     } else {
       await ctx.reply('This command requires a text message.');
     }
