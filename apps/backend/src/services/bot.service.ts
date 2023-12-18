@@ -97,7 +97,7 @@ export class BotService {
           await client.start({
             botAuthToken: botToken,
           });
-          console.log('Session:', client.session.save());
+          client.session.save();
           const userEntity = await client.getInputEntity(username);
           if ('userId' in userEntity) {
             await ctx.reply('User ID: ' + userEntity.userId);
