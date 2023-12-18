@@ -31,8 +31,8 @@ export class BotService {
       });
       await this.userRepository.save(telegramUser);
 
-      const message = `Welcome ${telegramUser.first_name}`;
-      const websiteUrlWithUsername = `${this.webUrl}?username=${telegramUser.first_name}`;
+      const message = `Welcome ${user.first_name}`;
+      const websiteUrlWithUsername = `${this.webUrl}?username=${user.first_name}`;
       const urlButton = Markup.button.url('Visit Website', websiteUrlWithUsername);
 
       const inlineKeyboard = Markup.inlineKeyboard([urlButton]);
