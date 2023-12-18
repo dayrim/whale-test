@@ -21,7 +21,14 @@ export class BotService {
   async start(@Ctx() ctx: Context) {
     try {
       const user = ctx.from;
-      const telegramUser = this.userRepository.create(user);
+      const telegramUser = this.userRepository.create({
+        id: user.id.toString(),
+        is_bot: user.is_bot,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        username: user.username,
+        language_code: user.language_code,
+      });
       await this.userRepository.save(telegramUser);
 
       const message = `Welcome ${telegramUser.first_name}`;

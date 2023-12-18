@@ -2,8 +2,8 @@ import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class TelegramUser {
-  @PrimaryColumn()
-  id: number;
+  @PrimaryColumn('bigint')
+  id: string;
 
   @Column({ default: false })
   is_admin: boolean;
