@@ -99,6 +99,8 @@ jobs:
           echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
           echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
           echo "WEB_URL=${{ secrets.WEB_URL }}" >> .env
+          echo "TELEGRAM_APP_ID=${{ secrets.TELEGRAM_APP_ID }}" >> .env
+          echo "TELEGRAM_APP_ID_HASH=${{ secrets.TELEGRAM_APP_ID_HASH }}" >> .env
 
       - name: Copy docker-compose file and .env file to remote server
         uses: appleboy/scp-action@master

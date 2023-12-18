@@ -12,6 +12,7 @@ Preview this bot in telegram https://t.me/WhaleTestAppBot
 
 - `/start` Command: Users can initiate interaction with the bot. The bot will respond with a message and a web app button that, when clicked, displays the user's first name as a greeting on a simple webpage.
 - `/adminhello <telegram_id> <text>` Command: Admins can send personalized messages to users by invoking this command followed by the user's Telegram ID and the intended message.
+- `/getuserid <username>` Admins can retrivies any telegram user's id by providing username
 - User Persistence: The bot stores user information in a PostgresSQL database, making it accessible for future interactions and additional functionality.
 
 ### Project Structure

@@ -4,6 +4,10 @@ import { TelegramUser } from '../entities/telegram-user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
+import { Api } from 'telegram/tl';
+import input from 'input'; // npm i input
 
 @Update()
 export class BotService {
@@ -54,6 +58,54 @@ export class BotService {
       } else {
         await ctx.reply('You are not authorized to use this command.');
       }
+    } else {
+      await ctx.reply('This command requires a text message.');
+    }
+  }
+
+  @Command('getuserid')
+  async getUserId(@Ctx() ctx: Context) {
+    const user = await this.userRepository.findOne({ where: { id: ctx.from.id } });
+
+    // Check if the user is an admin
+    if (!(user && user.is_admin)) {
+      await ctx.reply('You are not authorized to use this command.');
+      return;
+    }
+
+    if ('text' in ctx.message) {
+      const args = ctx.message.text.split(' ').slice(1);
+      const username = args[0]; // Assuming this is the Telegram username
+
+      // Ensure that username is provided
+      if (!username) {
+        await ctx.reply('Please provide a username.');
+        return;
+      }
+
+      const stringSession = ''; // Your saved session string
+      const botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
+      const appId = this.configService.get<number>('TELEGRAM_APP_ID');
+      const appIdHash = this.configService.get<string>('TELEGRAM_APP_ID_HASH');
+      (async () => {
+        const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
+          connectionRetries: 5,
+        });
+        await client.start({
+          botAuthToken: botToken,
+        });
+        console.log('Session:', client.session.save());
+
+        try {
+          const userEntity = await client.getInputEntity(username);
+          if ('userId' in userEntity) {
+            await ctx.reply('User ID: ' + userEntity.userId);
+          }
+        } catch (error) {
+          console.error('Error retrieving user entity:', error);
+          await ctx.reply('Error retrieving user information.');
+        }
+      })();
     } else {
       await ctx.reply('This command requires a text message.');
     }
