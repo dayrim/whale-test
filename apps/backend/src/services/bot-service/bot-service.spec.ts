@@ -1,19 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BotService } from './bot.service';
+import { BotService } from './bot-service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TelegramUser } from '../entities/telegram-user.entity';
+import { TelegramUser } from '../../entities/telegram-user.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Context, Markup } from 'telegraf';
+import { TelegramAppApiService } from '../telegram-app-api/telegram-app-api.service';
 
 describe('BotService', () => {
   let botService: BotService;
   let mockRepository: Partial<Repository<TelegramUser>>;
+  let mockTelegramAppApiService: Partial<TelegramAppApiService>;
 
   beforeEach(async () => {
     mockRepository = {
       create: jest.fn().mockImplementation((dto) => dto),
       save: jest.fn().mockImplementation(async (user) => Promise.resolve(user)),
+      findOne: jest.fn().mockImplementation(async () => Promise.resolve({ is_admin: true })),
+    };
+
+    mockTelegramAppApiService = {
+      getUserId: jest.fn().mockImplementation(async () => '123'),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -24,6 +31,10 @@ describe('BotService', () => {
           useValue: mockRepository,
         },
         {
+          provide: TelegramAppApiService,
+          useValue: mockTelegramAppApiService,
+        },
+        {
           provide: ConfigService,
           useValue: { get: jest.fn().mockReturnValue('http://example.com') },
         },
@@ -31,10 +42,6 @@ describe('BotService', () => {
     }).compile();
 
     botService = module.get<BotService>(BotService);
-  });
-
-  it('should be defined', () => {
-    expect(botService).toBeDefined();
   });
 
   describe('start method', () => {

@@ -1,11 +1,10 @@
 import { Update, Ctx, Start, Command } from 'nestjs-telegraf';
 import { Context, Markup } from 'telegraf';
-import { TelegramUser } from '../entities/telegram-user.entity';
+import { TelegramUser } from '../../entities/telegram-user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { TelegramClient } from 'telegram';
-import { StringSession } from 'telegram/sessions';
+import { TelegramAppApiService } from '../telegram-app-api/telegram-app-api.service';
 @Update()
 export class BotService {
   private readonly webUrl: string;
@@ -13,6 +12,7 @@ export class BotService {
     @InjectRepository(TelegramUser)
     private readonly userRepository: Repository<TelegramUser>,
     private readonly configService: ConfigService,
+    private readonly telegramAppApiService: TelegramAppApiService,
   ) {
     this.webUrl = this.configService.get<string>('WEB_URL');
   }
@@ -80,22 +80,12 @@ export class BotService {
         await ctx.reply('Please provide a username.');
         return;
       }
-
-      const stringSession = '';
-      const botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
-      const appId = this.configService.get<number>('TELEGRAM_APP_ID');
-      const appIdHash = this.configService.get<string>('TELEGRAM_APP_ID_HASH');
       try {
-        const client = new TelegramClient(new StringSession(stringSession), Number(appId), appIdHash, {
-          connectionRetries: 5,
-        });
-        await client.start({
-          botAuthToken: botToken,
-        });
-        client.session.save();
-        const userEntity = await client.getInputEntity(username);
-        if ('userId' in userEntity) {
-          await ctx.reply('User ID: ' + userEntity.userId);
+        const userId = await this.telegramAppApiService.getUserId(user.id, username);
+        if (userId !== null) {
+          await ctx.reply('User ID: ' + userId);
+        } else {
+          await ctx.reply('Error retrieving user information.');
         }
       } catch (error) {
         await ctx.reply('Error retrieving user information:' + error.message);

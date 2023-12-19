@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { BotService } from './services/bot.service';
+import { BotService } from './services/bot-service/bot-service';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TelegramUser } from './entities/telegram-user.entity';
 import { AppController } from './app.controller';
+import { SessionStorageService } from './services/session-storage/session-storage.service';
+import { TelegramAppApiService } from './services/telegram-app-api/telegram-app-api.service';
 
 @Module({
   imports: [
@@ -45,7 +47,7 @@ import { AppController } from './app.controller';
     }),
     TypeOrmModule.forFeature([TelegramUser]),
   ],
-  providers: [BotService],
+  providers: [BotService, SessionStorageService, TelegramAppApiService],
   controllers: [AppController],
 })
 export class AppModule {}
