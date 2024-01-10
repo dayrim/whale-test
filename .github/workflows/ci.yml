@@ -108,8 +108,6 @@ jobs:
           echo "REMOTE_SSH_PASSPHRASE=${{ secrets.REMOTE_SSH_PASSPHRASE }}" >> .env
           echo "REGISTRY_USERNAME=${{ secrets.REGISTRY_USERNAME }}" >> .env
           echo "REGISTRY_PASSWORD=${{ secrets.REGISTRY_PASSWORD }}" >> .env
-      - name: Print .env file content
-        run: cat .env
         
       - name: Copy docker-compose file and .env file to remote server
         uses: appleboy/scp-action@master
